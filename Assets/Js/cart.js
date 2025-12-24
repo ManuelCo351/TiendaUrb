@@ -114,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==============================================
     
     // IMPORTANTE: Reemplazá 'TU_PUBLIC_KEY_ACA' por tu clave pública real
-    const mp = new MercadoPago('TU_PUBLIC_KEY_ACA', {
+    const mp = new MercadoPago('APP_USR-a094f642-e305-42d6-b03c-3b79e9b9805f', {
         locale: 'es-AR'
     });
 
