@@ -1,125 +1,158 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es-AR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     
-    <title>Hijo Pródigo | Streetwear & Urban Clothing Argentina</title>
-    <meta name="description" content="Tienda oficial de Hijo Pródigo. Indumentaria urbana con esencia eterna. Envíos a todo el país. Remeras oversize, hoodies y accesorios de alta calidad.">
-    <meta name="theme-color" content="#000000"> <meta property="og:type" content="website">
-    <meta property="og:title" content="Hijo Pródigo | Temporada de Cosecha">
-    <meta property="og:image" content="assets/img/og-cover.jpg"> <script type="application/ld+json">
+    <title>Hijo Pródigo | Streetwear & Ropa Urbana Argentina</title>
+    
+    <meta name="description" content="Tienda oficial de Hijo Pródigo Ind. Ropa urbana con esencia eterna. Hoodies oversize, remeras boxy fit y accesorios. Envíos a todo el país desde Santa Cruz.">
+    
+    <meta name="keywords" content="streetwear argentina, ropa urbana, oversize, hijo prodigo, hoodies, remeras cristianas, moda joven, pico truncado">
+    
+    <meta name="author" content="Hijo Pródigo Ind.">
+    <meta name="theme-color" content="#111111"> <link rel="canonical" href="https://hijoprodigo.com.ar/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Hijo Pródigo Ind.">
+    <meta property="og:title" content="Nuevo Drop: Temporada de Cosecha 🐑">
+    <meta property="og:description" content="Descubrí la nueva colección. Diseño y propósito. 3 cuotas sin interés.">
+    <meta property="og:image" content="Assets/img/og-image.jpg"> <meta property="og:url" content="https://hijoprodigo.com.ar/">
+
+    <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "ClothingStore",
       "name": "Hijo Pródigo Ind.",
+      "image": "https://hijoprodigo.com.ar/assets/img/logo.png",
+      "@id": "https://hijoprodigo.com.ar",
       "url": "https://hijoprodigo.com.ar",
+      "telephone": "+5492974123456",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Dirección del Local o Taller",
+        "addressLocality": "Pico Truncado",
+        "addressRegion": "Santa Cruz",
+        "postalCode": "9015",
+        "addressCountry": "AR"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -46.7951,
+        "longitude": -67.9622
+      },
       "priceRange": "$$$",
-      "sameAs": ["https://www.instagram.com/hijoprodigo.ind/"]
+      "sameAs": [
+        "https://www.instagram.com/hijoprodigo.ind/"
+      ]
     }
     </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
     
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     
     <link rel="stylesheet" href="Assets/css/style.css">
 </head>
+
 <body>
 
-    <div class="marquee-wrapper">
+    <div class="marquee-container">
         <div class="marquee-content">
-            ENVÍOS GRATIS > $60.000 🇦🇷 &nbsp; • &nbsp; 3 Y 6 CUOTAS SIN INTERÉS &nbsp; • &nbsp; DROP #3 "TEMPORADA DE COSECHA" &nbsp; • &nbsp; ENVÍOS GRATIS > $60.000 🇦🇷 &nbsp; • &nbsp; 3 Y 6 CUOTAS SIN INTERÉS
+            ENVÍOS GRATIS > $80.000 🇦🇷 &nbsp; • &nbsp; 3 Y 6 CUOTAS SIN INTERÉS &nbsp; • &nbsp; NUEVO DROP "COSECHA" YA DISPONIBLE &nbsp; • &nbsp; ENVÍOS A TODO EL PAÍS 🚚 &nbsp; • &nbsp; 3 Y 6 CUOTAS SIN INTERÉS
         </div>
     </div>
 
-    <header class="main-header">
-        <nav class="nav-container">
-            <button class="menu-toggle" aria-label="Abrir menú">
-                <i class="ph ph-list"></i>
-            </button>
+    <header class="main-header" id="header">
+        <div class="container-fluid">
+            <nav class="nav-wrapper">
+                
+                <button class="menu-toggle" aria-label="Abrir menú">
+                    <i class="ph ph-list"></i>
+                </button>
 
-            <div class="logo">
-                <a href="#">HIJO PRÓDIGO</a>
-            </div>
-
-            <ul class="desktop-menu">
-                <li><a href="#home">Inicio</a></li>
-                <li><a href="#shop">Colección</a></li>
-                <li><a href="#about">Manifiesto</a></li>
-            </ul>
-
-            <div class="nav-icons">
-                <button aria-label="Buscar"><i class="ph ph-magnifying-glass"></i></button>
-                <div class="cart-wrapper" id="cart-btn">
-                    <button aria-label="Carrito"><i class="ph ph-shopping-bag"></i></button>
-                    <span class="cart-badge">0</span>
+                <div class="brand-logo">
+                    <a href="index.html">
+                        Hijo Pródigo
+                    </a>
                 </div>
-            </div>
-        </nav>
-    </header>
 
-    <main>
+                <ul class="desktop-nav">
+                    <li><a href="#home" class="nav-link">Inicio</a></li>
+                    <li><a href="#shop" class="nav-link">Colección</a></li>
+                    <li><a href="#concept" class="nav-link">Concepto</a></li> <li><a href="#contact" class="nav-link">Contacto</a></li>
+                </ul>
+
+                <div class="nav-actions">
+                    <button class="icon-btn" aria-label="Buscar productos">
+                        <i class="ph ph-magnifying-glass"></i>
+                    </button>
+                    
+                    <button class="icon-btn hide-mobile" aria-label="Mi cuenta">
+                        <i class="ph ph-user"></i>
+                    </button>
+                    
+                    <div class="cart-trigger" id="cart-btn">
+                        <button class="icon-btn" aria-label="Ver carrito">
+                            <i class="ph ph-shopping-bag"></i>
+                        </button>
+                        <span class="cart-badge">0</span>
+                    </div>
+                </div>
+
+            </nav>
+        </div>
+    </header>
+        <main>
+
         <section id="home" class="hero-section">
+            
             <div class="hero-bg">
-                <img src="assets/img/hero-bg.jpg" alt="Streetwear Argentino" class="parallax-img">
+                <img src="assets/img/hero-bg.jpg" 
+                     alt="Hijo Pródigo Streetwear Colección Cosecha" 
+                     class="parallax-img"
+                     loading="eager"> 
+                
                 <div class="overlay"></div>
             </div>
 
             <div class="hero-content">
-                <span class="reveal-text">EST. 2024 — ARGENTINA</span>
-                <h1 class="reveal-text delay-100">TEMPORADA DE<br>COSECHA</h1>
-                <p class="reveal-text delay-200">ROPA CON ESENCIA ETERNA. DISEÑO Y PROPÓSITO.</p>
+                
+                <span class="hero-tag reveal-text">EST. 2024 — ARGENTINA</span>
+                
+                <h1 class="reveal-text delay-100">
+                    TEMPORADA DE<br>COSECHA
+                </h1>
+                
+                <p class="reveal-text delay-200">
+                    DISEÑO CON PROPÓSITO. ESENCIA ETERNA.
+                </p>
                 
                 <div class="hero-btns reveal-text delay-300">
-                    <a href="#shop" class="btn-primary">VER DROP #3</a>
+                    <a href="#shop" class="btn-primary">
+                        VER EL DROP #3
+                    </a>
+                    
+                    <a href="#concept" class="btn-outline">
+                        <i class="ph ph-play-circle"></i> CAMPAÑA
+                    </a>
                 </div>
             </div>
 
-            <div class="scroll-down">
+            <div class="scroll-indicator">
+                <span>SCROLL</span>
                 <i class="ph ph-caret-down"></i>
             </div>
+
         </section>
 
-        <section id="shop" class="shop-section">
-            <div class="section-header reveal-scroll">
-                <h2>NUEVOS INGRESOS</h2>
-                <p>EDICIÓN LIMITADA</p>
-            </div>
+        </main>
+    
 
-            <div class="filters reveal-scroll">
-                <button class="filter-btn active" data-filter="all">Todo</button>
-                <button class="filter-btn" data-filter="remeras">Remeras</button>
-                <button class="filter-btn" data-filter="hoodies">Hoodies</button>
-            </div>
-
-            <div class="products-grid" id="products-container">
-                </div>
-        </section>
-    </main>
-
-    <footer class="main-footer">
-        <div class="footer-content">
-            <div class="footer-logo">
-                <h3>HP</h3>
-                <p>Echo en tierra Santa 🇦🇷</p>
-            </div>
-            <div class="footer-links">
-                <a href="#">Instagram</a>
-                <a href="#">Contacto</a>
-                <a href="#">Términos</a>
-            </div>
-        </div>
-        <div class="copyright">
-            <p>&copy; 2025 Hijo Pródigo Ind.</p>
-        </div>
-    </footer>
-
-    <script src="Assets/js/products.js"></script> 
-    <script src="Assets/js/app.js"></script>
-</body>
+    </body>
 </html>
 
