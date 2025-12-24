@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urban Shop - Demo Headless</title>
+    <style>
+        /* Estilos básicos para que se vea lindo */
+        body { font-family: sans-serif; background-color: #f4f4f4; }
+        h1 { text-align: center; text-transform: uppercase; letter-spacing: 2px; }
+
+        /* Esta es la grilla contenedora */
+        #contenedor-productos {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Así se verá cada tarjeta de producto */
+        .card-producto {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .card-producto img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover; /* Para que la foto no se deforme */
+            border-radius: 4px;
+        }
+
+        .precio { font-weight: bold; font-size: 1.2rem; color: #333; }
+        .btn-comprar {
+            background-color: black;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Nuevos Ingresos</h1>
+
+    <div id="contenedor-productos"></div>
+
+    <script>
+        // 1. LOS DATOS (EL "CUERPO")
+        // En la vida real, esto no estaría escrito acá, vendría de internet con un 'fetch()'
+        // Pero el formato sería idéntico a este JSON:
+        const respuestaDelCMS = [
+            {
+                id: 1,
+                nombre: "Remera Oversize Basic",
+                precio: 15000,
+                imagen: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=500&q=80"
+            },
+            {
+                id: 2,
+                nombre: "Hoodie Street Black",
+                precio: 45000,
+                imagen: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=500&q=80"
+            },
+            {
+                id: 3,
+                nombre: "Cargo Pants Olive",
+                precio: 32000,
+                imagen: "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=500&q=80"
+            }
+        ];
+
+        // 2. EL CONECTOR (TU LÓGICA JS)
+        const contenedor = document.getElementById('contenedor-productos');
+
+        // Recorremos la lista de productos
+        respuestaDelCMS.forEach(producto => {
+            
+            // Creamos el HTML dinámicamente usando "Template Strings" (las comillas invertidas ``)
+            const htmlDelProducto = `
+                <div class="card-producto">
+                    <img src="${producto.imagen}" alt="${producto.nombre}">
+                    <h3>${producto.nombre}</h3>
+                    <p class="precio">$${producto.precio}</p>
+                    <button class="btn-comprar" onclick="agregarAlCarrito(${producto.id})">
+                        Agregar
+                    </button>
+                </div>
+            `;
+
+            // Lo "inyectamos" dentro del contenedor
+            contenedor.innerHTML += htmlDelProducto;
+        });
+
+        // Función simple para probar el botón
+        function agregarAlCarrito(id) {
+            alert("Agregaste el producto ID: " + id);
+        }
+
+    </script>
+</body>
+</html>
