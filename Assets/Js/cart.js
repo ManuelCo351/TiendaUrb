@@ -1,45 +1,45 @@
 /* ==============================================
-   LÓGICA DEL CARRITO + CHECKOUT MERCADO PAGO
+   LÓGICA DEL CARRITO - VERSIÓN BLINDADA
    ============================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
     
-    // 1. VARIABLES GLOBALES
-    let cart = JSON.parse(localStorage.getItem("hijoProdigoCart")) || []; 
+    // 1. CARGA DE DATOS
+    let cart = JSON.parse(localStorage.getItem("hijoProdigoCart")) || [];
     
+    // Elementos del DOM
     const cartDrawer = document.getElementById("cart-drawer");
     const cartOverlay = document.getElementById("cart-overlay");
     const cartItemsContainer = document.getElementById("cart-items-container");
     const cartTotalPrice = document.getElementById("cart-total-price");
     const cartCountHeader = document.getElementById("cart-count-header");
-    const cartBadges = document.querySelectorAll(".cart-badge"); 
-    
-    const openCartBtns = document.querySelectorAll(".cart-wrapper button, #cart-btn button");
-    const closeCartBtn = document.getElementById("close-cart-btn");
-    const continueBtn = document.getElementById("continue-shopping");
-    const checkoutBtn = document.getElementById("checkout-btn"); // Lo traemos acá arriba
+    const cartBadges = document.querySelectorAll(".cart-badge");
+    const checkoutBtn = document.getElementById("checkout-btn");
 
-    // 2. FUNCIONES DE APERTURA / CIERRE
-    function openCart() {
+    // 2. FUNCIONES DE INTERFAZ
+    const openCart = () => {
         cartDrawer.classList.add("active");
         cartOverlay.classList.add("active");
-        document.body.style.overflow = "hidden"; 
-    }
+        document.body.style.overflow = "hidden";
+    };
 
-    function closeCart() {
+    const closeCart = () => {
         cartDrawer.classList.remove("active");
         cartOverlay.classList.remove("active");
         document.body.style.overflow = "auto";
-    }
+    };
 
-    openCartBtns.forEach(btn => btn.addEventListener("click", openCart));
-    closeCartBtn.addEventListener("click", closeCart);
-    continueBtn.addEventListener("click", closeCart);
-    cartOverlay.addEventListener("click", closeCart);
+    // Asignar eventos de apertura/cierre
+    document.querySelectorAll(".cart-wrapper button, #cart-btn button").forEach(b => b.onclick = openCart);
+    if(document.getElementById("close-cart-btn")) document.getElementById("close-cart-btn").onclick = closeCart;
+    if(document.getElementById("continue-shopping")) document.getElementById("continue-shopping").onclick = closeCart;
+    if(cartOverlay) cartOverlay.onclick = closeCart;
 
-    // 3. RENDERIZAR CARRITO
-    function renderCart() {
-        cartItemsContainer.innerHTML = ""; 
+    // 3. RENDERIZADO (La parte que no te cargaba)
+    window.renderCart = function() {
+        if (!cartItemsContainer) return;
+        
+        cartItemsContainer.innerHTML = "";
         let total = 0;
         let totalItems = 0;
 
@@ -50,14 +50,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 total += item.price * item.quantity;
                 totalItems += item.quantity;
 
-                const itemHTML = `
+                cartItemsContainer.innerHTML += `
                 <div class="cart-item">
                     <img src="${item.image}" alt="${item.name}">
                     <div class="item-details">
-                        <div>
-                            <h4>${item.name}</h4>
-                            <span class="item-variant">Talle: ${item.size}</span>
-                        </div>
+                        <h4>${item.name}</h4>
+                        <span class="item-variant">Talle: ${item.size}</span>
                         <div class="item-controls">
                             <div class="qty-control">
                                 <button onclick="updateQty(${index}, -1)">-</button>
@@ -68,24 +66,19 @@ document.addEventListener("DOMContentLoaded", () => {
                         </div>
                     </div>
                     <div style="font-weight: 600;">$${(item.price * item.quantity).toLocaleString('es-AR')}</div>
-                </div>
-                `;
-                cartItemsContainer.innerHTML += itemHTML;
+                </div>`;
             });
         }
 
-        cartTotalPrice.textContent = `$ ${total.toLocaleString('es-AR')}`;
-        cartCountHeader.textContent = totalItems;
+        if(cartTotalPrice) cartTotalPrice.textContent = `$ ${total.toLocaleString('es-AR')}`;
+        if(cartCountHeader) cartCountHeader.textContent = totalItems;
         cartBadges.forEach(badge => badge.textContent = totalItems);
-
         localStorage.setItem("hijoProdigoCart", JSON.stringify(cart));
-    }
+    };
 
-    // 4. FUNCIONES GLOBALES (Window)
+    // 4. FUNCIONES DE ACCIÓN
     window.updateQty = (index, change) => {
-        if (cart[index].quantity + change > 0) {
-            cart[index].quantity += change;
-        }
+        if (cart[index].quantity + change > 0) cart[index].quantity += change;
         renderCart();
     };
 
@@ -95,73 +88,32 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     window.addToCart = (productObj) => {
-        const existingItemIndex = cart.findIndex(item => item.id === productObj.id && item.size === productObj.size);
-
-        if (existingItemIndex > -1) {
-            cart[existingItemIndex].quantity += productObj.quantity;
-        } else {
-            cart.push(productObj);
-        }
-
+        const idx = cart.findIndex(i => i.id === productObj.id && i.size === productObj.size);
+        idx > -1 ? cart[idx].quantity += productObj.quantity : cart.push(productObj);
         renderCart();
-        openCart(); 
+        openCart();
     };
 
-    renderCart();
+    // 5. MERCADO PAGO (Protegido por si falla la clave)
+    if (typeof MercadoPago !== 'undefined') {
+        const mp = new MercadoPago('TU_PUBLIC_KEY_REAL', { locale: 'es-AR' });
 
-    // ==============================================
-    // 6. CHECKOUT CON MERCADO PAGO (Integrado Correctamente)
-    // ==============================================
-    
-    // IMPORTANTE: Reemplazá 'TU_PUBLIC_KEY_ACA' por tu clave pública real
-    const mp = new MercadoPago('APP_USR-a094f642-e305-42d6-b03c-3b79e9b9805f', {
-        locale: 'es-AR'
-    });
-
-    checkoutBtn.addEventListener("click", async () => {
-        
-        // 1. VALIDACIÓN
-        if (cart.length === 0) {
-            alert("Tu bolsa está vacía 😔");
-            return;
-        }
-
-        const originalText = checkoutBtn.textContent;
-        checkoutBtn.textContent = "PROCESANDO...";
-        checkoutBtn.disabled = true;
-
-        try {
-            // 2. PEDIR PREFERENCIA A VERCEL
-            const response = await fetch('/api/checkout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ items: cart }), 
-            });
-
-            const data = await response.json();
-
-            if (data.id) {
-                // 3. ABRIR CHECKOUT
-                mp.checkout({
-                    preference: {
-                        id: data.id
-                    },
-                    autoOpen: true, 
+        checkoutBtn.onclick = async () => {
+            if (cart.length === 0) return alert("Bolsa vacía");
+            checkoutBtn.innerText = "PROCESANDO...";
+            try {
+                const res = await fetch('/api/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ items: cart })
                 });
-            } else {
-                alert("Hubo un error al generar el pago. Intenta de nuevo.");
-            }
+                const data = await res.json();
+                if (data.id) mp.checkout({ preference: { id: data.id }, autoOpen: true });
+            } catch (e) { alert("Error al conectar con Mercado Pago"); }
+            checkoutBtn.innerText = "INICIAR COMPRA";
+        };
+    }
 
-        } catch (error) {
-            console.error(error);
-            alert("Error de conexión. Revisá tu internet.");
-        } finally {
-            checkoutBtn.textContent = originalText;
-            checkoutBtn.disabled = false;
-        }
-    });
-
-}); // <--- ¡AQUÍ CIERRA TODO EL DOCUMENTO!
+    renderCart(); // Carga inicial
+});
                           
