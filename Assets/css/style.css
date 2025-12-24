@@ -1,1 +1,231 @@
 
+/* ==========================================================================
+   1. VARIABLES & CONFIGURACIÓN GLOBAL (El ADN de la Marca)
+   ========================================================================== */
+:root {
+    /* --- PALETA DE COLORES --- */
+    --color-bg: #ffffff;             /* Fondo general */
+    --color-text: #111111;           /* Negro "Off-Black" (Más elegante que el #000 puro) */
+    --color-text-light: #666666;     /* Gris para subtítulos */
+    --color-accent: #5d6d45;         /* Verde Oliva (Tierra Santa / Esencia) */
+    --color-error: #d32f2f;          /* Para errores en formularios */
+    
+    /* --- TIPOGRAFÍA --- */
+    --font-primary: 'Montserrat', sans-serif;         /* Lectura, Menús, Botones */
+    --font-display: 'UnifrakturMaguntia', cursive;    /* Títulos Impactantes, Logo */
+    
+    /* --- TAMAÑOS & ESPACIADOS --- */
+    --header-height: 80px;           /* Altura fija del menú */
+    --container-width: 1440px;       /* Ancho máximo en pantallas gigantes */
+    --border-radius: 4px;            /* Bordes apenas redondeados (Estilo serio) */
+    
+    /* --- ANIMACIONES --- */
+    --transition-fast: 0.2s ease;
+    --transition-smooth: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Curva de movimiento premium */
+}
+
+/* --- RESET & BASE --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Fundamental para que los paddings no rompan el ancho */
+}
+
+html {
+    scroll-behavior: smooth; /* Scroll suave al tocar links ancla */
+    font-size: 16px; /* Base size */
+}
+
+body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-primary);
+    -webkit-font-smoothing: antialiased; /* Texto nítido en Mac/iPhone */
+    line-height: 1.6;
+    overflow-x: hidden; /* Evita scroll horizontal indeseado */
+}
+
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+button { border: none; background: none; cursor: pointer; font-family: inherit; }
+
+/* ==========================================================================
+   2. MARQUEE INFINITO (Cinta Superior)
+   ========================================================================== */
+.marquee-container {
+    background-color: #000; /* Fondo negro absoluto */
+    color: #fff;
+    padding: 10px 0;
+    overflow: hidden;
+    position: relative;
+    z-index: 1002; /* Por encima de todo */
+    border-bottom: 1px solid #222;
+}
+
+.marquee-content {
+    display: inline-block;
+    white-space: nowrap; /* Impide que el texto baje de renglón */
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    
+    /* LA ANIMACIÓN */
+    animation: scrollText 25s linear infinite;
+    /* Truco para GPU: */
+    will-change: transform; 
+}
+
+@keyframes scrollText {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); } /* Se mueve hasta la mitad para hacer loop perfecto */
+}
+
+/* ==========================================================================
+   3. HEADER PRINCIPAL (Navegación)
+   ========================================================================== */
+.main-header {
+    height: var(--header-height);
+    width: 100%;
+    position: sticky; /* Se queda pegado arriba */
+    top: 0;
+    z-index: 1000;
+    
+    /* EFECTO VIDRIO (Glassmorphism) */
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(12px); /* Desenfoca lo que pasa por atrás */
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    
+    display: flex;
+    align-items: center;
+    transition: var(--transition-smooth);
+}
+
+.container-fluid {
+    width: 100%;
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 20px; /* Margen a los costados en móvil */
+}
+
+.nav-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* --- LOGO --- */
+.brand-logo a {
+    font-family: var(--font-display); /* Fuente Gótica */
+    font-size: 2rem; /* Tamaño grande */
+    letter-spacing: 1px;
+    color: var(--color-text);
+    transition: var(--transition-fast);
+}
+
+.brand-logo a:hover {
+    color: var(--color-accent); /* Se pinta de verde al pasar el mouse */
+}
+
+/* --- MENÚ ESCRITORIO --- */
+.desktop-nav {
+    display: flex;
+    gap: 40px; /* Espacio entre items */
+}
+
+.nav-link {
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    position: relative;
+    padding: 5px 0;
+}
+
+/* Animación de subrayado elegante */
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0; /* Empieza invisible */
+    height: 1px;
+    background-color: var(--color-accent);
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+    width: 100%; /* Se llena al 100% */
+}
+
+/* --- ICONOS DE ACCIÓN (Derecha) --- */
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.icon-btn {
+    font-size: 1.4rem;
+    color: var(--color-text);
+    display: flex; /* Para centrar el icono */
+    align-items: center;
+    transition: transform 0.2s;
+}
+
+.icon-btn:hover {
+    transform: scale(1.1); /* Zoom sutil */
+    color: var(--color-text-light);
+}
+
+/* Badge del Carrito */
+.cart-trigger { position: relative; }
+
+.cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -6px;
+    background-color: var(--color-accent); /* Verde Oliva */
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- MENU TOGGLE (Móvil) --- */
+.menu-toggle {
+    display: none; /* Oculto por defecto en PC */
+    font-size: 1.8rem;
+}
+
+/* ==========================================================================
+   4. RESPONSIVE (Ajustes para Celular)
+   ========================================================================== */
+@media (max-width: 992px) {
+    /* En pantallas menores a 992px (Tablets y Celus) */
+    
+    .desktop-nav {
+        display: none; /* Ocultamos el menú de texto */
+    }
+    
+    .menu-toggle {
+        display: block; /* Mostramos la hamburguesa */
+    }
+    
+    .hide-mobile {
+        display: none; /* Ocultamos iconos extra (como Usuario) para ahorrar espacio */
+    }
+    
+    .brand-logo a {
+        font-size: 1.6rem; /* Logo un poco más chico */
+    }
+    
+    :root {
+        --header-height: 60px; /* Header más fino en celular */
+    }
+}
