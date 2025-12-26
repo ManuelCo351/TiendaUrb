@@ -8,6 +8,12 @@
    3. Asegurate de poner una coma (,) después de cada llave de cierre }, 
       menos en el último producto.
    ========================================================================== */
+// Función para convertir imágenes a WebP automáticamente
+const imgAPI = (ruta) => {
+    // Cambiá esto por TU dominio real de Vercel
+    const dominio = 'https://hijo-prodigo.vercel.app/'; 
+    return `https://wsrv.nl/?url=${dominio}${ruta}&output=webp&q=80`;
+};
 
 const productos = [
     {
