@@ -40,10 +40,6 @@ function cargarProductos() {
                         XL: row.stock_xl || 0
                     }
                 }));
-            
-            // ¡ESTE CARTEL TE VA A CONFIRMAR SI ANDA!
-            alert(`¡Conectado! Se cargaron ${window.products.length} productos.`);
-            
             if (typeof renderShop === 'function') renderShop();
             if (typeof loadProductDetail === 'function') loadProductDetail();
         },
