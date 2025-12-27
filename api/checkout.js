@@ -1,7 +1,7 @@
 const { MercadoPagoConfig, Preference } = require('mercadopago');
 
 const ENVIO_COSTO_FIJO = 8000;
-const ENVIO_GRATIS_DESDE = 120000;
+const ENVIO_GRATIS_DESDE = 1;
 const MONTO_MAYORISTA = 500000;
 const DESCUENTO_MAYORISTA = 25;
 const DESCUENTO_EXTRA_EVENTO = 0;
