@@ -1,12 +1,19 @@
 /* ==============================================
-   LÓGICA DEL CARRITO - VERSIÓN BLINDADA
+   LÓGICA DEL CARRITO - VERSIÓN COMPLETA
+   (Incluye: Renderizado, Descuentos Visuales, MP y WhatsApp)
    ============================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
     
-    // 1. CARGA DE DATOS
+    // 1. CARGA DE DATOS Y CONSTANTES
     let cart = JSON.parse(localStorage.getItem("hijoProdigoCart")) || [];
     
+    // --- REGLAS DE NEGOCIO (Igual que en el servidor) ---
+    const ENVIO_COSTO_FIJO = 8000;
+    const ENVIO_GRATIS_DESDE = 120000;
+    const MONTO_MAYORISTA = 500000;
+    const DESCUENTO_MAYORISTA = 0.25; // 25%
+
     // Elementos del DOM
     const cartDrawer = document.getElementById("cart-drawer");
     const cartOverlay = document.getElementById("cart-overlay");
@@ -15,8 +22,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const cartCountHeader = document.getElementById("cart-count-header");
     const cartBadges = document.querySelectorAll(".cart-badge");
     const checkoutBtn = document.getElementById("checkout-btn");
+    const whatsappBtn = document.getElementById("whatsapp-btn"); // Nuevo botón
+    const shippingNote = document.querySelector(".shipping-note"); // Texto chiquito del envío
 
-    // 2. FUNCIONES DE INTERFAZ
+    // 2. FUNCIONES DE INTERFAZ (Abrir/Cerrar)
     const openCart = () => {
         cartDrawer.classList.add("active");
         cartOverlay.classList.add("active");
@@ -29,25 +38,27 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.style.overflow = "auto";
     };
 
-    // Asignar eventos de apertura/cierre
     document.querySelectorAll(".cart-wrapper button, #cart-btn button").forEach(b => b.onclick = openCart);
     if(document.getElementById("close-cart-btn")) document.getElementById("close-cart-btn").onclick = closeCart;
     if(document.getElementById("continue-shopping")) document.getElementById("continue-shopping").onclick = closeCart;
     if(cartOverlay) cartOverlay.onclick = closeCart;
 
-    // 3. RENDERIZADO (La parte que no te cargaba)
+    // 3. RENDERIZADO INTELIGENTE (Con descuentos visuales)
     window.renderCart = function() {
         if (!cartItemsContainer) return;
         
         cartItemsContainer.innerHTML = "";
-        let total = 0;
+        let subtotal = 0; // Precio puro de productos
         let totalItems = 0;
 
+        // A. Dibujar productos
         if (cart.length === 0) {
             cartItemsContainer.innerHTML = `<p class="empty-msg">Tu bolsa está vacía 😔</p>`;
+            shippingNote.innerText = "Gastos de envío e impuestos calculados en el pago.";
+            shippingNote.style.color = "#666";
         } else {
             cart.forEach((item, index) => {
-                total += item.price * item.quantity;
+                subtotal += item.price * item.quantity;
                 totalItems += item.quantity;
 
                 cartItemsContainer.innerHTML += `
@@ -70,7 +81,38 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        if(cartTotalPrice) cartTotalPrice.textContent = `$ ${total.toLocaleString('es-AR')}`;
+        // B. Calcular Totales y Mensajes (Lógica visual)
+        let totalFinal = subtotal;
+
+        // 1. Lógica Mayorista
+        if (subtotal >= MONTO_MAYORISTA) {
+            // Aplicar descuento
+            const descuento = subtotal * DESCUENTO_MAYORISTA;
+            totalFinal = subtotal - descuento;
+            
+            if(shippingNote) {
+                shippingNote.innerHTML = `🎉 <b>DESCUENTO MAYORISTA APLICADO (-25%)</b>`;
+                shippingNote.style.color = "#2ecc71"; // Verde
+            }
+        } 
+        // 2. Lógica Envío Gratis (Si no es mayorista)
+        else if (subtotal >= ENVIO_GRATIS_DESDE) {
+            if(shippingNote) {
+                shippingNote.innerHTML = `🚚 Tenés <b>ENVÍO GRATIS</b> a todo el país.`;
+                shippingNote.style.color = "#2ecc71"; // Verde
+            }
+        } 
+        // 3. Lógica Envío con Costo
+        else if (subtotal > 0) {
+            const falta = ENVIO_GRATIS_DESDE - subtotal;
+            if(shippingNote) {
+                shippingNote.innerHTML = `Faltan <b>$${falta.toLocaleString('es-AR')}</b> para envío gratis (Costo actual: $${ENVIO_COSTO_FIJO})`;
+                shippingNote.style.color = "#666";
+            }
+        }
+
+        // C. Actualizar Textos
+        if(cartTotalPrice) cartTotalPrice.textContent = `$ ${totalFinal.toLocaleString('es-AR')}`;
         if(cartCountHeader) cartCountHeader.textContent = totalItems;
         cartBadges.forEach(badge => badge.textContent = totalItems);
         localStorage.setItem("hijoProdigoCart", JSON.stringify(cart));
@@ -94,26 +136,56 @@ document.addEventListener("DOMContentLoaded", () => {
         openCart();
     };
 
-    // 5. MERCADO PAGO (Protegido por si falla la clave)
+    // 5. MERCADO PAGO (Botón Negro)
     if (typeof MercadoPago !== 'undefined') {
         const mp = new MercadoPago('APP_USR-68bd50d1-4a4f-4568-93cd-02ad055366eb', { locale: 'es-AR' });
        
-        checkoutBtn.onclick = async () => {
-            if (cart.length === 0) return alert("Bolsa vacía");
-            checkoutBtn.innerText = "PROCESANDO...";
-            try {
-                const res = await fetch('/api/checkout', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ items: cart })
-                });
-                const data = await res.json();
-                if (data.id) mp.checkout({ preference: { id: data.id }, autoOpen: true });
-            } catch (e) { alert("Error al conectar con Mercado Pago"); }
-            checkoutBtn.innerText = "INICIAR COMPRA";
+        if(checkoutBtn) {
+            checkoutBtn.onclick = async () => {
+                if (cart.length === 0) return alert("Bolsa vacía");
+                checkoutBtn.innerText = "PROCESANDO...";
+                try {
+                    const res = await fetch('/api/checkout', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ items: cart })
+                    });
+                    const data = await res.json();
+                    if (data.id) mp.checkout({ preference: { id: data.id }, autoOpen: true });
+                } catch (e) { alert("Error al conectar con Mercado Pago"); }
+                checkoutBtn.innerText = "INICIAR COMPRA";
+            };
+        }
+    }
+
+    // 6. WHATSAPP (Botón Verde - A Convenir)
+    if (whatsappBtn) {
+        whatsappBtn.onclick = () => {
+            if (cart.length === 0) return alert("El carrito está vacío");
+
+            let mensaje = "¡Hola Tienda Urb! 👋 Quiero coordinar este pedido (A convenir/Efectivo):\n\n";
+            let totalEstimado = 0;
+
+            cart.forEach(item => {
+                const sub = item.price * item.quantity;
+                totalEstimado += sub;
+                mensaje += `- ${item.name} (${item.size}) x${item.quantity}: $${sub}\n`;
+            });
+
+            // Agregamos lógica visual al mensaje de WhatsApp también
+            if (totalEstimado >= MONTO_MAYORISTA) {
+                totalEstimado = totalEstimado * (1 - DESCUENTO_MAYORISTA);
+                mensaje += `\n*APLICA DESCUENTO MAYORISTA (-25%)*`;
+            }
+
+            mensaje += `\n*TOTAL FINAL: $${totalEstimado.toLocaleString('es-AR')}*\n`;
+            mensaje += "\nMis datos para el envío/retiro son:";
+
+            const telefono = "5492975373508"; // Tu número
+            window.open(`https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`, '_blank');
         };
     }
 
     renderCart(); // Carga inicial
 });
-                          
+                         
